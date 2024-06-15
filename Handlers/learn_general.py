@@ -88,7 +88,7 @@ async def lear_themed(call: CallbackQuery, state: FSMContext):
 
     await call.answer()
 
-    markup = button(["Учить выборкой", "Посмотреть список"])
+    markup = button(["Учить выборкой", "Посмотреть список", "Главное меню"])
     await call.message.edit_text(
         text="Ты можешь учить слова случайной выборкой или просто посмотреть их список - выбирай", 
         reply_markup=markup
@@ -111,26 +111,27 @@ async def get_themed_words_list_on_button(call : CallbackQuery, state: FSMContex
     for i, k in word_list[0].items():
         string += f"<b>{i} : {k}</b>\n\n"
     if len(string) > 0:
-        await call.message.edit_text(f"{string}\nКоличество слов в по этой теме: <b>{word_list[1]}</b>", reply_markup=button(["Главное меню"]))
+        await call.message.edit_text(f"{string}\nКоличество слов в по этой теме: <b>{word_list[1]}</b>", reply_markup=button(["Главное меню", "Учить выборкой"]))
     else:
         await call.message.edit_text("Похоже, что по этой теме слов еще не добавили 😭", reply_markup=button(["Главное меню", "Добавить слова"]))
 
 
 '''
-Обработка сценария для обучения выборко - обработчик нажатия кнопки
+Обработка сценария для обучения выборкой - обработчик нажатия кнопки
 '''
 @global_learn_router.callback_query(F.data == 'Учить выборкой')
 async def learn_byb(call: CallbackQuery, state: FSMContext, session : AsyncSession):
     try:
         theme = await state.get_data()
+        print(theme)
         # Функция получения случайного слова из общей таблицы
         word = await orm_get_random_themed_word(session=session, data=theme)
 
         await state.set_state(Learn1.Translate)
-        await call.message.edit_text('Сейчас тебе по очереди будут отправляться слова на Иврите, которые были ранее записываны в общий словарь, и ты должен(на) будешь записать их перевод<b>на Русском</b>.\n\nЕсли перевод верный, то тебе будет предложено следующее слово.\n\n<b>Слова из словаря будут выбираться до тех пор пока ты не введешь команду:\n\n/stop</b>')
+        await call.message.edit_text('Сейчас тебе по очереди будут отправляться слова на Иврите, которые были ранее записываны в общий словарь, и ты должен(на) будешь записать их перевод<b>на Русском</b>.\n\nЕсли перевод верный, то тебе будет предложено следующее слово.\n\n<b>Слова из словаря будут выбираться до тех пор пока ты не нажмешь кнопку или не введешь команду /stop</b>')
         await sleep(5)
 
-        await call.message.answer(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить', "Остановить урок"]))
+        await call.message.answer(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить слово', "Остановить урок"]))
         await state.update_data(translation = word[1], transcription = word[2], word = word[0])
     except AttributeError as e:
         await call.message.edit_text("Кажется, что в словаре еще нет слов по этой теме 🤷‍♂️\n\nЕсли после добавления слова возникнет такая же ошибка, то обязательно напиши @Megagigapoopfart", reply_markup=button(["Добавить слова", "Главное меню"]))
@@ -153,11 +154,12 @@ async def check(message: Message, state: FSMContext, session: AsyncSession):
 
         # Функция получения случайного слова в общей таблице
         word = await orm_get_random_themed_word(session=session, data=state_data)
-        await message.answer(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить', "Остановить урок"]))
+        print(word)
+        await message.answer(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить слово', "Остановить урок"]))
         await state.update_data(translation = word[1], transcription = word[2], word = word[0])
         return
     
-    await message.answer('<b>Неправильно</b> 😨\n\nПопробуй-ка еще раз!', reply_markup=button(['Пропустить слово']))
+    await message.answer('<b>Неправильно</b> 😨\n\nПопробуй-ка еще раз!', reply_markup=button(['Пропустить слово', 'Остановить урок']))
     
 
 '''
@@ -167,8 +169,8 @@ async def check(message: Message, state: FSMContext, session: AsyncSession):
 @error_handler
 async def skip(call : CallbackQuery, state: FSMContext, session: AsyncSession):
     await call.answer()
-
     sd = await state.get_data()
+    print(sd)
     await call.message.edit_text(
         text=f"Слово - {sd['word']} - [{sd['transcription']}]\n\nПеревод - <b>{sd['translation']}</b>"
     )
@@ -176,6 +178,6 @@ async def skip(call : CallbackQuery, state: FSMContext, session: AsyncSession):
 
     # Функция получения случайного слова в общей таблице
     word = await orm_get_random_themed_word(session=session, data=sd)
-    await call.message.edit_text(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить']))
+    await call.message.edit_text(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить слово']))
     
     await state.update_data(translation = word[1], transcription = word[2], word = word[0])

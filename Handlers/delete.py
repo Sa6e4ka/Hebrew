@@ -74,3 +74,4 @@ async def delte_global_word(message: Message, state: FSMContext, session: AsyncS
         await message.answer(text="Этого слова в таблице еще нет 😭",reply_markup=markup)
     await state.clear()
 
+

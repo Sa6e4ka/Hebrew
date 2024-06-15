@@ -1,6 +1,7 @@
 from sqlalchemy import select, update, delete, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from Database.models import Words, User, ThemedWords, Themes, Competition
+from sqlalchemy.sql import not_
 
 from Loggs import logger
 
@@ -86,14 +87,30 @@ async def orm_save_word(data : dict, session : AsyncSession) -> None:
 '''
 Функция для получения случайного слова из таблицы пользователя
 '''
-async def orm_get_rand_personal_word(session: AsyncSession, chat_id : str) -> list:
+async def orm_get_rand_personal_word(session: AsyncSession, chat_id : str, word: str) -> list:
 # Получение id пользователя
     id = await orm_get_user_id(session=session, chat_id=chat_id)
-
-# Сортировка слов в случайном порядке и выборка одного элемента
-    querry = select(Words).where(Words.user_id == id).order_by(func.random()).limit(1)
-    
-    result = await session.execute(querry)
+    if word is not None:
+        query = (
+            select(Words)
+                .where(
+                    Words.user_id == id, 
+                    Words.word != word
+                )
+                .order_by(func.random())
+                    .limit(1)
+        )
+    else:
+    # Сортировка слов в случайном порядке и выборка одного элемента
+        query = (
+            select(Words)
+                .where(
+                    Words.user_id == id
+                )
+                .order_by(func.random())
+                    .limit(1)
+        )     
+    result = await session.execute(query)
     scl = result.scalars().first()
 
 # возврат списка со словом и его переводом
@@ -198,8 +215,18 @@ async def orm_get_themed_words_list(session : AsyncSession, theme : dict) -> lis
 '''
 async def orm_get_random_themed_word(session : AsyncSession, data : dict) -> str:
     id = await orm_get_theme_id(session=session, theme = data["theme"])
-
-    query = select(ThemedWords).where(ThemedWords.theme_id == id).order_by(func.random()).limit(1)
+    if "word" in data:
+        query = (
+            select(ThemedWords)
+                .where(
+                    ThemedWords.theme_id == id, 
+                    ThemedWords.word != data["word"]
+                )
+                .order_by(func.random())\
+                    .limit(1)
+        )
+    else:
+        query = select(ThemedWords).where(ThemedWords.theme_id == id).order_by(func.random()).limit(1)
     exc = await session.execute(query)
 
     result = exc.scalars().first()

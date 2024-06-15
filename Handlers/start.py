@@ -22,8 +22,11 @@ start_router = Router()
 @error_handler
 async def start(message : Message, session : AsyncSession):
     # Сохранение пользователя в таблице
-    await orm_add_user(session=session, username=message.from_user.username, chat_id=message.chat.id)
-    await message.answer(text= hello, reply_markup=StartKB.as_markup())
+    if message.from_user.username is not None:
+        await orm_add_user(session=session, username=message.from_user.username, chat_id=message.chat.id)
+        await message.answer(text= hello, reply_markup=StartKB.as_markup())
+        return
+    await message.answer(text="<b>Пожалуйста, добавьте в своем профиле telegram имя пользователя (поле Username) иначе вам будет недоступен функционал бота!\n\nПосле этого обязательно введите команду /start еще раз!</b>")
 
 
 '''
@@ -33,7 +36,11 @@ async def start(message : Message, session : AsyncSession):
 @error_handler
 async def start_on_button(call : CallbackQuery, state: FSMContext):
     await state.clear()
-    await call.message.edit_text(text= command_list,reply_markup=StartKB.as_markup())
+    if call.message.text:
+        await call.message.edit_text(text= command_list,reply_markup=StartKB.as_markup())
+        return
+    await call.message.answer(text=command_list, reply_markup=StartKB.as_markup())
+
 
 '''
 Команда для открытия главного меню

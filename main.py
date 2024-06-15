@@ -24,7 +24,7 @@ except Exception as e:
 from Handlers import (
     start_router, words_router, learn_router, 
     save_personal_router, save_general_router, 
-    delete_router, compete_router, global_learn_router, logging_router
+    delete_router, compete_router, global_learn_router, logging_router, send_database_router
 )
 
 # Импортируем команды
@@ -39,13 +39,14 @@ dp = Dispatcher()
 from Middleware import DataBaseSession
 
 # Подключаем к диспетчеру все роутеры из создаваемых хендлеров
-dp.include_routers(start_router, save_personal_router, words_router, delete_router, compete_router, learn_router, global_learn_router, logging_router, save_general_router)
+dp.include_routers(start_router, save_personal_router, words_router, delete_router, compete_router, learn_router, global_learn_router, logging_router, save_general_router, send_database_router)
 
 # Добавляем основные "глобальные" хендлеры
 @dp.message(Command('state'))
 async def state_get(message: Message, state: FSMContext):
     current_state = await state.get_state()
     await message.answer(text=f'Текущее состояние: {current_state}')
+
 
 @dp.message(Command('stateclear'))
 async def clear_state(message: Message, state: FSMContext):
@@ -67,7 +68,7 @@ async def main():
 # Запуск main
 if __name__ == "__main__":
     try:
-        logger.info("I'M ALIVE")
+        logger.info("Бот запущен по ссылке: https://t.me/BazaZnaniyZakupky_bot")
         asyncio.run(main())
     except KeyboardInterrupt:
         logger.info('Бот остановлен!')

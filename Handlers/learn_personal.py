@@ -1,7 +1,6 @@
 '''
 Режим обучения словам из личного словаря пользователя
 '''
-
 from asyncio import sleep
 
 from aiogram import F, Router
@@ -27,7 +26,7 @@ learn_router = Router()
 '''
 async def process_learn(state: FSMContext, session: AsyncSession, chat_id: int, message_or_call):
     try:
-        word = await orm_get_rand_personal_word(session=session, chat_id=chat_id)
+        word = await orm_get_rand_personal_word(session=session, chat_id=chat_id, word=None)
         await state.set_state(Learn.Translate)
         intro_message = (
             'Сейчас тебе отправится слово на Иврите, которое ты ранее записывал(а) в свой личный словарь, '
@@ -105,7 +104,7 @@ async def check(message: Message, state: FSMContext, session: AsyncSession):
         await sleep(1)
 
         # Получение случайного слова из личной таблицы пользователя
-        word = await orm_get_rand_personal_word(session=session, chat_id=message.chat.id)
+        word = await orm_get_rand_personal_word(session=session, chat_id=message.chat.id, word=state_data["word"])
         await message.answer(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить', "Остановить урок"]))
         await state.update_data(translation = word[1], transcription = word[2], word = word[0])
         return
@@ -127,7 +126,7 @@ async def skip(call : CallbackQuery, state: FSMContext, session: AsyncSession):
     await sleep(3)
     
     # Получение случайного слова из личной таблицы пользователя
-    word = await orm_get_rand_personal_word(session=session, chat_id=call.message.chat.id)
-    await call.message.edit_text(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить']))
+    word = await orm_get_rand_personal_word(session=session, chat_id=call.message.chat.id, word=sd["word"])
+    await call.message.edit_text(text=f"Слово:<b>\n\n{word[0]}</b>\n\nТеперь введи его перевод:", reply_markup=button(text=['Пропустить', 'Остановить урок']))
     
     await state.update_data(translation = word[1], transcription = word[2], word = word[0])

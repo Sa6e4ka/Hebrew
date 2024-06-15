@@ -3,7 +3,7 @@
 '''
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command, StateFilter, or_f
 from aiogram.types import  Message, CallbackQuery
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,7 +33,7 @@ async def get_all_words(message: Message, session : AsyncSession):
 '''
 Обработчик кнопки добавления темы
 '''
-@words_router.callback_query(F.data == "Добавить тему")
+@words_router.callback_query(or_f(F.data == "Добавить тему", F.data == "Добавить еще тему"))
 @error_handler
 async def save_themes_on_button(call: CallbackQuery, state: FSMContext):
     await call.message.edit_text("Введи название темы", reply_markup=button(["Отмена"]))
@@ -51,14 +51,14 @@ async def save_themes(message: Message, state: FSMContext):
 
 
 '''
-Обработчие сообщения для сохранения темы
+Обработчик сообщения для сохранения темы
 '''
 @words_router.message(StateFilter(Theme.first), F.text)
 @error_handler
 async def save_an_themes(message: Message, state: FSMContext, session: AsyncSession):
     # Функция сохранения темы
     await orm_save_theme(session=session, theme_name=message.text.lower())
-    await message.answer("Тема успешно добавлена!", reply_markup=button(["Главное меню"]))
+    await message.answer("Тема успешно добавлена!", reply_markup=button(["Главное меню", "Добавить еще тему", "Добавить слово по этой теме"]))
     await state.clear()
 
 

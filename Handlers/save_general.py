@@ -20,7 +20,7 @@ async def process_theme_selection(message_or_call, session: AsyncSession):
     themes = await orm_get_theme_list(session=session)
     if len(themes) == 0:
         text = "Похоже, что ни одной темы еще не было добавлено в общий словарь 🤔"
-        reply_markup = button(["Главное меню", "Отмена"])
+        reply_markup = button(["Главное меню", "Добавить тему"])
         
         if isinstance(message_or_call, Message):
             await message_or_call.answer(text=text, reply_markup=reply_markup)
@@ -71,17 +71,20 @@ async def pagination_handler(call: CallbackQuery, callback_data: Pagination, ses
 @save_general_router.callback_query(or_f(F.data.startswith("theme"), F.data == "Загрузить по той же теме", F.data == "Добавить слово по этой теме"))
 async def callback_on_themes(call: CallbackQuery, state: FSMContext):
     await state.set_state(SaveThemed.second)
-
-    if F.data.startswith("theme"):
-        theme = call.data.split("_")[-1]
-        await state.update_data(theme = theme)
-    else:    
+    state_data = await state.get_data()
+    
+    if "theme" in state_data:    
         state_data = await state.get_data()
         theme = state_data["theme"]
+        print(theme)
         await state.update_data(theme=theme)
-
+        await call.answer()
+        await call.message.edit_text(text="Введи слово на <b>Иврите</b>", reply_markup=button("Отмена"))
+        return
+    theme = call.data.split("_")[-1]
+    await state.update_data(theme = theme)
     await call.answer()
-    await call.message.edit_text(text="Введи слово на <b>Иврите</b>")
+    await call.message.edit_text(text="Введи слово на <b>Иврите</b>", reply_markup=button("Отмена"))
 
 
 '''
