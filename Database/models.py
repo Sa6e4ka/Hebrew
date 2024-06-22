@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import String, ForeignKey, INTEGER, Float
+from sqlalchemy import String, ForeignKey, INTEGER, Float, Text
 
 
 class Base(DeclarativeBase):
@@ -20,6 +20,7 @@ class User(Base):
     # Обозначение связи с таблицей слов
     words: Mapped[list["Words"]] = relationship("Words", back_populates="user")
     competition: Mapped[list["Competition"]] = relationship("Competition", back_populates="user")
+    rules: Mapped[list["Rules"]] = relationship("Rules", back_populates="user")
 
 
 '''
@@ -83,3 +84,18 @@ class Competition(Base):
     user_id: Mapped[str] = mapped_column(ForeignKey("user.user_id"))
     user: Mapped["User"] = relationship("User", back_populates="competition")
 
+
+'''
+Таблица с личными правилами пользователя
+'''
+class Rules(Base):
+    __tablename__ = "rules"
+
+    id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
+
+    name_rule: Mapped[str] = mapped_column(String(100), nullable=False)
+    rule: Mapped[str] = mapped_column(Text(500), nullable=False)
+                                                                                                                                                                                   
+# Добавление внешнего ключа с id пользователя
+    user_id: Mapped[str] = mapped_column(ForeignKey("user.user_id"))
+    user: Mapped["User"] = relationship("User", back_populates="rules")

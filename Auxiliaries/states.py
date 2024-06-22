@@ -50,3 +50,12 @@ class LearnThemed(StatesGroup):
 
 class Competition(StatesGroup):
     Translate = State() 
+
+
+class Rule(StatesGroup):
+    first = State()
+    second = State()
+
+
+class DeleteRule(StatesGroup):
+    first = State()

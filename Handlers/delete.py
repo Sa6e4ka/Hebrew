@@ -1,15 +1,16 @@
 '''
 Удаление слова из словарей
 '''
+from typing import Union
 from aiogram import F, Router
 from aiogram.filters import Command, StateFilter, or_f
 from aiogram.fsm.context import FSMContext
 from aiogram.types import  Message, CallbackQuery
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from Database import orm_delete_word, orm_delete_themed
+from Database import orm_delete_word, orm_delete_themed, orm_delete_rule
 
-from Auxiliaries import Delete, Delete2, button, error_handler
+from Auxiliaries import Delete, Delete2, button, error_handler, DeleteRule
 
 
 # Delete Router
@@ -74,4 +75,51 @@ async def delte_global_word(message: Message, state: FSMContext, session: AsyncS
         await message.answer(text="Этого слова в таблице еще нет 😭",reply_markup=markup)
     await state.clear()
 
+
+'''
+
+'''
+async def delete_rule(state: FSMContext, message_or_call: Union[Message, CallbackQuery]) -> None:
+    message_text = "Введи название правила, которое хочешь удалить"
+    await state.set_state(DeleteRule.first)
+
+    if isinstance(message_or_call, Message):
+        await message_or_call.answer(message_text, reply_markup=button(["Отмена"]))
+        return
+    await message_or_call.answer()
+    await message_or_call.message.edit_text(message_text, reply_markup=button(["Отмена"]))
+
+
+'''
+
+'''
+@delete_router.message(Command("deleterule"))
+@error_handler
+async def delete_rule_on_command(message: Message, state: FSMContext):
+    await delete_rule(state=state, message_or_call=message)
+
+
+'''
+
+'''
+@delete_router.callback_query(CallbackQuery, or_f(F.data == "Удалить правило", F.data == "Удалить еще правило"))
+@error_handler
+async def delete_rule_on_button(call: CallbackQuery, state: FSMContext):
+    await delete_rule(state=state, message_or_call=call)
+
+
+'''
+
+'''
+@delete_router.message(StateFilter(DeleteRule.first, F.text))
+@error_handler
+async def delete_rule_from_db(message: Message, session: AsyncSession):
+
+    await orm_delete_rule(
+        session=session, data={
+            "name_rule" : message.text.lower(),
+            "chat_id" : message.chat.id
+        }
+    )
+    await message.answer("Правило успешно удалено!", reply_markup=button(["Главное меню", "Удалить еще правило"]))
 

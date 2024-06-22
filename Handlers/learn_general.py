@@ -35,6 +35,7 @@ async def process_themed_learning(message_or_call, session: AsyncSession):
         return
     
     KB = await paginator_for_themed_learn(page=0, themes=themes)
+    print(KB)
     text = "Выбери тему, по которой хочешь учить слова"
     
     if isinstance(message_or_call, Message):

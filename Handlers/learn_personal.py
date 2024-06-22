@@ -46,6 +46,7 @@ async def process_learn(state: FSMContext, session: AsyncSession, chat_id: int, 
             await state.update_data(translation=word[1], transcription=word[2], word=word[0])
             return
         
+        await message_or_call.answer()
         await message_or_call.message.edit_text(intro_message)
         await sleep(5)
         await message_or_call.message.edit_text(

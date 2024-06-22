@@ -8,3 +8,6 @@ from .competition import compete_router
 from .learn_general import global_learn_router
 from .get_loggs import logging_router
 from .get_database import send_database_router
+from .get_rules import get_rules_router
+from .save_rules import save_rules_router
+from .in_progress import in_progress_router

@@ -1,6 +1,5 @@
 from aiogram.types import BotCommand
 
-
 private = [
     BotCommand(command="menu", description="Открыть главное меню"),
     BotCommand(command='saveword',description='Сохранить слово в личный словарь 📚'),
@@ -13,5 +12,8 @@ private = [
     BotCommand(command='delete',description= 'Удалить слово из словаря ❌'),
     BotCommand(command='addtheme',description= 'Создать новую тему 📂'),
     BotCommand(command='pealim',description= 'Открыть сайт pealim.com 🌐'),
-    BotCommand(command='top',description= 'Посмотреть таблицу лидеров 🥇'),\
+    BotCommand(command='top',description= 'Посмотреть таблицу лидеров 🥇'),
+    BotCommand(command='saverule',description= 'Загрузить правила в личный сборник 🗯'),
+    BotCommand(command='getrule',description= 'Посмотреть свои правила 🤓'),
+    BotCommand(command="dialog", description="Поговорить на Иврите 🗣")
 ]

@@ -23,8 +23,10 @@ except Exception as e:
 # Из папки handlers импортируем все хендлеры
 from Handlers import (
     start_router, words_router, learn_router, 
-    save_personal_router, save_general_router, 
-    delete_router, compete_router, global_learn_router, logging_router, send_database_router
+    save_personal_router, save_general_router, delete_router, 
+    compete_router, global_learn_router, logging_router, 
+    send_database_router, in_progress_router, get_rules_router,
+    save_rules_router
 )
 
 # Импортируем команды
@@ -39,7 +41,12 @@ dp = Dispatcher()
 from Middleware import DataBaseSession
 
 # Подключаем к диспетчеру все роутеры из создаваемых хендлеров
-dp.include_routers(start_router, save_personal_router, words_router, delete_router, compete_router, learn_router, global_learn_router, logging_router, save_general_router, send_database_router)
+dp.include_routers(
+    start_router, save_personal_router, words_router, 
+    delete_router, compete_router, learn_router, 
+    global_learn_router, logging_router, save_general_router, 
+    send_database_router, save_rules_router, in_progress_router
+)
 
 # Добавляем основные "глобальные" хендлеры
 @dp.message(Command('state'))
@@ -68,7 +75,7 @@ async def main():
 # Запуск main
 if __name__ == "__main__":
     try:
-        logger.info("Бот запущен по ссылке: https://t.me/BazaZnaniyZakupky_bot")
+        logger.info(f"Бот запущен по ссылке: {os.environ.get("BOT_LINK")}")
         asyncio.run(main())
     except KeyboardInterrupt:
         logger.info('Бот остановлен!')
