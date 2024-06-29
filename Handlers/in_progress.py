@@ -4,9 +4,14 @@ from aiogram.filters import Command, StateFilter
 from aiogram.types import  Message 
 from Auxiliaries import button
 
+# In Progress Router
 in_progress_router = Router()
 
-functions_in_progress_list = ["getrule", "dialog"]
+
+'''
+Список команд, работа над которыми не закончена
+'''
+functions_in_progress_list = []
 
 
 @in_progress_router.message(StateFilter("*"), Command(commands=functions_in_progress_list))

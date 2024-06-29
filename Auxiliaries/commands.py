@@ -13,7 +13,4 @@ private = [
     BotCommand(command='addtheme',description= 'Создать новую тему 📂'),
     BotCommand(command='pealim',description= 'Открыть сайт pealim.com 🌐'),
     BotCommand(command='top',description= 'Посмотреть таблицу лидеров 🥇'),
-    BotCommand(command='saverule',description= 'Загрузить правила в личный сборник 🗯'),
-    BotCommand(command='getrule',description= 'Посмотреть свои правила 🤓'),
-    BotCommand(command="dialog", description="Поговорить на Иврите 🗣")
 ]

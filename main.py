@@ -25,8 +25,7 @@ from Handlers import (
     start_router, words_router, learn_router, 
     save_personal_router, save_general_router, delete_router, 
     compete_router, global_learn_router, logging_router, 
-    send_database_router, in_progress_router, get_rules_router,
-    save_rules_router
+    send_database_router, in_progress_router, 
 )
 
 # Импортируем команды
@@ -41,11 +40,13 @@ dp = Dispatcher()
 from Middleware import DataBaseSession
 
 # Подключаем к диспетчеру все роутеры из создаваемых хендлеров
+
+# dp.include_router(in_progress_router)
 dp.include_routers(
     start_router, save_personal_router, words_router, 
     delete_router, compete_router, learn_router, 
     global_learn_router, logging_router, save_general_router, 
-    send_database_router, save_rules_router, in_progress_router
+    send_database_router
 )
 
 # Добавляем основные "глобальные" хендлеры

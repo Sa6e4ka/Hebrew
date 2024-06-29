@@ -1,5 +1,4 @@
 from .get_queries import *
-from .rules_queries import *
 from .save_queries import *
 from .user_queries import *
 from .count_queries import *
