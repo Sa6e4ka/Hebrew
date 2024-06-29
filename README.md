@@ -14,12 +14,12 @@
 
 1. Склонируйте репозиторий:
     ```bash
-    git clone https://github.com/Sa6e4ka/Hebrew-Bot.git
+    git clone https://github.com/Sa6e4ka/Hebrew.git
     ```
 
 2. Перейдите в директорию проекта:
     ```bash
-    cd Hebrew-Bot
+    cd Hebrew
     ```
 
 3. Создайте и активируйте виртуальное окружение:
