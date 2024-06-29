@@ -39,6 +39,12 @@
     DATABASE_URL=<ваш_url_базы_данных>
     ```
 
+6. Если запуск бота происходит на Linux Ubuntu 22.04, то необходимо установить пакет pkg-config:
+    ```bash
+    sudo apt-get update
+    sudo apt-get install pkg-config libmysqlclient-dev
+    ```
+
 ### Запуск
 
 Для запуска бота выполните следующую команду:
