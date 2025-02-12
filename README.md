@@ -1,52 +1,47 @@
 # Hebrew Learning Bot
 
-Этот проект представляет собой Telegram-бота для изучения иврита русскоговорящей аудиторией. Бот предоставляет различные функции для изучения новых слов, повторения выученных, участия в соревнованиях и управления базой данных.
+### This project is a Telegram bot designed to help Russian-speaking users learn Hebrew. The bot provides various features for learning new words, reviewing learned ones, participating in competitions, and managing the database.
 
+## Installation and Setup
 
-## Установка и запуск
+### Requirements:
+Python 3.8 or higher
+Virtual environment (recommended)
+Installation
 
-### Требования
+### Clone the repository:
+```
+git clone https://github.com/Sa6e4ka/Hebrew.git
+```
+### Navigate to the project directory:
+```
+cd Hebrew
+```
+### Create and activate a virtual environment:
+```
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-- Python 3.8 или выше
-- Виртуальное окружение (рекомендуется)
+### Install dependencies:
+```
+pip install -r requirements.txt
+```
+### Create a .env file in the project's root directory and add the following variables:
+```
+TOKEN=<your_bot_token>
+DATABASE_URL=<your_database_url>
+```
 
-### Установка
+### If running the bot on Linux Ubuntu 22.04, install the pkg-config and libmysqlclient-dev packages:
+```
+sudo apt-get update
+sudo apt-get install pkg-config libmysqlclient-dev
+```
 
-1. Склонируйте репозиторий:
-    ```bash
-    git clone https://github.com/Sa6e4ka/Hebrew.git
-    ```
+## Running the Bot
 
-2. Перейдите в директорию проекта:
-    ```bash
-    cd Hebrew
-    ```
-
-3. Создайте и активируйте виртуальное окружение:
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # На Windows: venv\Scripts\activate
-    ```
-
-4. Установите зависимости:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-5. Создайте файл `.env` в корневой директории проекта и добавьте следующие переменные:
-    ```env
-    TOKEN=<ваш_токен_бота>
-    DATABASE_URL=<ваш_url_базы_данных>
-    ```
-
-6. Если запуск бота происходит на Linux Ubuntu 22.04, то необходимо установить пакеты pkg-config и libmysqlclient-dev:
-    ```bash
-    sudo apt-get update
-    sudo apt-get install pkg-config libmysqlclient-dev
-    ```
-
-### Запуск
-
-Для запуска бота выполните следующую команду:
-```bash
-python main.py
+### To start the bot, run the following command:
+```
+python main.py  
+```
